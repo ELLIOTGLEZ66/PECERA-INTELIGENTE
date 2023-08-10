@@ -1,0 +1,28 @@
+body{
+    overflow: scroll !important;
+}
+*{
+    padding: 0;
+    margin: 0;
+}
+.dis-menu
+{
+    margin: 5px;
+    padding: 10px;
+}
+.dis-menu:hover
+{
+    background: rgb(183, 183, 184,.2);
+}
+.back
+{
+    color: white;
+    background-color: rgb(23, 23, 51);
+}
+
+/* -------------------- Estado De Mi Pecera ---------------------- */
+.titulo1 {
+    color:black;
+    margin:auto;
+    text-align:center;
+}                                       

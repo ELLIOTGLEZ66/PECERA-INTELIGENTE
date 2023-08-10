@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRAFICAS DE LA PECERA</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@latest/dist/Chart.min.js"></script>
+</head>
+<body>
+    <style>
+
+        body {
+          font-family: 'Open Sans', sans-serif;
+          margin: 0;
+          padding: 0;
+        }
+        
+        #header {
+          background-color: #333;
+          color: #fff;
+          padding: 20px; 
+        }
+        
+        #header h1 {
+          margin: 0;
+        }
+        
+        #content {
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+        
+        .section {
+          background-color: #f9f9f9;
+          padding: 20px;
+          margin-bottom: 20px;  
+          border-radius: 5px;
+        } 
+        
+        h2 {
+          border-bottom: 1px solid #ccc;
+        }
+        
+        canvas {
+          max-width: 100%;
+          height: auto !important;
+        }
+        
+        table {
+          width: 100%;
+          border-collapse: collapse; 
+        }
+        
+        th, td {
+          text-align: left;
+          padding: 8px;
+          border: 1px solid #ccc;
+        }
+        
+        </style>
+
+
+
+        <div id="header">
+          <h1>Aqua-Smart</h1>
+          <div class="menu">
+              <a href="#" id="usersPage">Home</a>
+              <a href="#" id="Chart1">My Pecera </a>
+              <a href="#" id="logout">Logout</a>
+          </div>
+      </div>
+        
+
+        <div id="content">
+          <div class="section">
+              <h2>NIVEL DE AGUA EN LA PECERA</h2>
+              <canvas id="grafica1"></canvas>
+          </div>
+  
+          <div class="section">
+              <h2>TEMPERATURA DE LA PECERA </h2>    
+              <canvas id="grafica2"></canvas>
+          </div>
+  
+          <div class="section">
+              <h2>CONDUCTIVIDAD EN LA PECERA</h2>
+              <canvas id="grafica3"></canvas>
+          </div>
+  
+          <div class="section">
+            <h2>VALORES EN LA BASE DE DATOS</h2>
+            <table id="tabla-datos">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>FECHA</th>
+                        <th>TEMPERATURA</th>
+                        <th>NIVEL DE AGUA</th>
+                        <th>LUZ</th>
+                        <th>CONDUCTIVIDAD</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-datos"></tbody>
+            </table>
+        </div>
+    </div>
+      
+      <script>
+          async function fetchAndDisplayData() {
+              try {
+                  const response = await fetch('*'); // Reemplaza * con la URL correcta para obtener los datos
+                  const data = await response.json();
+                  const keys = Object.keys(data[0]);
+  
+                  // Tomar los últimos 10 valores
+                  const last10Data = data.slice(-10);
+                  
+                  // Conjunto de datos para la primera gráfica
+                  const arrayT1 = last10Data.map(item => item.Sen_Nivel);
+                  const fechas = last10Data.map(item => item.Fecha); // Agregar este paso para obtener las fechas
+                  const ctx1 = document.getElementById('grafica1').getContext('2d');
+                  const etiquetas1 = fechas; // Usar las fechas como etiquetas
+                  const datosGrafica1 = {
+                      label: 'Sensor de Nivel de agua',
+                      data: arrayT1,
+                      backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                      borderColor: 'rgba(255, 99, 132, 1)',
+                      borderWidth: 1,
+                  };
+  
+                  new Chart(ctx1, {
+                      type: 'line',
+                      data: {
+                          labels: etiquetas1,
+                          datasets: [datosGrafica1],
+                      },
+                      options: {
+                          scales: {
+                              yAxes: [{
+                                  ticks: {
+                                      beginAtZero: true,
+                                  },
+                              }],
+                          },
+                      },
+                  });
+  
+                  // Conjunto de datos para la segunda gráfica
+                  const arrayT2 = last10Data.map(item => item.Sen_Temp);
+                  const ctx2 = document.getElementById('grafica2').getContext('2d');
+                  const etiquetas2 = fechas; // Usar las fechas como etiquetas
+                  const datosGrafica2 = {
+                      label: 'Sensor de Temperatura',
+                      data: arrayT2,
+                      backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                      borderColor: 'rgba(54, 162, 235, 1)',
+                      borderWidth: 1,
+                  };
+                  
+                  new Chart(ctx2, {
+                      type: 'line',
+                      data: {
+                          labels: etiquetas2,
+                          datasets: [datosGrafica2],
+                      },
+                      options: {
+                          scales: {
+                              yAxes: [{
+                                  ticks: {
+                                      beginAtZero: true,
+                                  },
+                              }],
+                          },
+                      },
+                  });
+
+
+                   // Conjunto de datos para la tercera gráfica (Sen_PH)
+                const arrayT3 = last10Data.map(item => item.Sen_PH);
+                const ctx3 = document.getElementById('grafica3').getContext('2d');
+                const etiquetas3 = fechas; // Usar las fechas como etiquetas
+                const datosGrafica3 = {
+                    label: 'Sensor de pH',
+                    data: arrayT3,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                };
+                
+                new Chart(ctx3, {
+                    type: 'line',
+                    data: {
+                        labels: etiquetas3,
+                        datasets: [datosGrafica3],
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true,
+                                },
+                            }],
+                        },
+                    },
+                });
+
+                
+                   // Mostrar los últimos 10 valores en la tabla
+                const tbody = document.querySelector('#lista-datos');
+                last10Data.forEach(item => {
+                    const row = document.createElement('tr');
+                    keys.forEach(key => {
+                        const td = document.createElement('td');
+                        if (key === 'Sen_Nivel') {
+                            td.textContent = item[key];
+                        } else if (key === 'Sen_Temp') {
+                            td.textContent = item[key];
+                        } else if (key === 'Sen_PH') {
+                            td.textContent = item[key];
+                          } else if (key === 'Sen_Luz') {
+                            td.textContent = item[key];
+                        } else if (key === 'Fecha') {
+                            td.textContent = item[key];
+                          } else if (key === 'ID_Sensores') {
+                            td.textContent = item[key];
+                        }
+                        row.appendChild(td);
+                    });
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                console.error('Error:', err);
+            }
+        }
+
+  
+          fetchAndDisplayData();
+      </script>
+  </body>
+  </html>
